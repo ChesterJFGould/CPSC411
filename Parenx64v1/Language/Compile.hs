@@ -49,7 +49,8 @@ compileStmt (Add reg triv) = unwords ["add", compileReg reg, ",", compileTriv tr
 compileStmt (Mult reg triv) = unwords ["imul", compileReg reg, ",", compileTriv triv]
 
 compileTriv :: Triv -> String
-compileTriv (Int i) = show i
+compileTriv (Int32 i) = show i
+compileTriv (Int64 i) = show i
 compileTriv (Reg reg) = compileReg reg
 
 compileReg :: Reg -> String

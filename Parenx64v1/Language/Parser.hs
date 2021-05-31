@@ -20,19 +20,22 @@ prog = (Program <$> stmt `sepEndBy` space1) <* eof
 stmt = do
        reg <- reg
        space
-       op <- op
+       (op, val) <- op
        space
-       val <- triv
+       val <- val
        return $ op reg val
 op = assocParse ops
-triv = (Int <$> int)
+triv32 = (Int32 <$> int)
        <|> (Reg <$> reg)
+triv64 = (Int64 <$> int)
+       <|> (Reg <$> reg)
+int :: Num a => Parsec Void String a
 int = signed (pure ()) decimal
 reg = assocParse regs
 
-ops = [ (":=", Set)
-      , ("+=", Add)
-      , ("*=", Mult) ]
+ops = [ (":=", (Set, triv64))
+      , ("+=", (Add, triv32))
+      , ("*=", (Mult, triv32)) ]
 
 regs = [ ("RSP", RSP)
        , ("RBP", RBP)
