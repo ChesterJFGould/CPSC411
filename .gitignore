@@ -1,0 +1,14 @@
+*
+
+!**/
+!.gitignore
+!**/**.md
+!**/**.hs
+!**/**.lhs
+!**/**.es
+!**/**.s
+!**/**.sh
+!**/Makefile
+!**/**.cabal
+
+**/dist-newstyle
