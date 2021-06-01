@@ -72,7 +72,7 @@ e.g.
 # Asm-lang v2
 + This stage removes all specific locations (registers and stack offsets) and
   replaces them with "abstract locations" (alocs). In the book these take the
-  form "<name>.<number>" however we can just represent them as a
+  form `<name>.<number>` however we can just represent them as a
   (Var String Int) or something similar. The number is there to fasciliate gensym?
 + Since at this stage we aren't going to be gensymming the variable names but
   simply parsing them, and since we're gonna rewrite this stage for the next
