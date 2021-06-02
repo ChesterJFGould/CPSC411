@@ -44,7 +44,9 @@ executable ValuesLangV3
 	  base >=4.13 && <4.14,
 	  containers,
 	  megaparsec,
-	  mtl
+	  mtl,
+	  temporary,
+	  process
   hs-source-dirs:
 	  .,
 	  Asm,
