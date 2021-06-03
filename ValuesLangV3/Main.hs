@@ -8,7 +8,7 @@ import Para
 import Paren
 
 import System.Environment
-import System.IO -- (hPutStrLn, hPutStr, stderr)
+import System.IO
 import System.IO.Temp
 import System.Process
 

@@ -4,9 +4,7 @@ import Data.Int
 import Data.Map
 import Data.Set
 
-data Program = Program { prog :: ([Stmt], Triv)
-                       , alocs :: Set Aloc
-                       , alocAddrs :: Map Aloc Int }
+data Program = Program [Stmt] Triv
              deriving Show
 
 data Stmt = Stmt Op Aloc Triv

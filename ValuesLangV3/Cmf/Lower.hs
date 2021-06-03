@@ -13,12 +13,10 @@ import Data.Map as M
 import Data.Set as S
 
 lower :: Program -> A.Program
-lower (Program (stmts, out) i) = A.Program (stmts', out') alocs alocAddrs
+lower (Program (stmts, out) i) = A.Program stmts' out'
                                where (out', stmts') = (flip evalState) i
                                                       $ runWriterT (mapM lowerStmt stmts
                                                                     >> lowerExpr out)
-                                     alocs = genAlocs stmts'
-                                     alocAddrs = genAlocAddrs alocs
 
 lowerStmt :: Stmt -> WriterT [A.Stmt] (State Int) ()
 lowerStmt (Set aloc expr) = do
