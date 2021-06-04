@@ -19,7 +19,7 @@ data Triv = Int Int64
 
 data Loc = Reg Reg
          | Addr Int -- QWORD [ RBP - <Int> ]
-         deriving (Eq, Show)
+         deriving (Eq, Ord, Show)
 
 data Reg = RSP
          | RBP

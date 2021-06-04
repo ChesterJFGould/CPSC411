@@ -17,7 +17,7 @@ lowerStmt (Stmt Set (Addr addr) (Loc (Reg reg))) = [P.SetAddr (P.Addr addr) (P.A
 lowerStmt (Stmt Set (Addr addr) (Loc (Addr addr'))) = [ P.SetReg P.R10 (P.RAddr . P.Addr $ addr')
                                                       , P.SetAddr (P.Addr addr) (P.AReg P.R10) ]
 lowerStmt (Stmt Set (Reg reg) (Int i)) = [P.SetReg (lowerReg reg) (P.RInt i)]
-lowerStmt (Stmt Set (Reg reg) (Loc (Reg reg'))) = [P.SetReg (lowerReg reg) (P.RReg . lowerReg $ reg)]
+lowerStmt (Stmt Set (Reg reg) (Loc (Reg reg'))) = [P.SetReg (lowerReg reg) (P.RReg . lowerReg $ reg')]
 lowerStmt (Stmt Set (Reg reg) (Loc (Addr addr))) = [P.SetReg (lowerReg reg) (P.RAddr . P.Addr $ addr)]
 lowerStmt (Stmt op (Addr addr) (Int i)) = [ P.SetReg P.R10 (P.RAddr . P.Addr $ addr)
                                           , P.BinOp (lowerOp op) P.R10 (P.OInt . fromIntegral $ i)
