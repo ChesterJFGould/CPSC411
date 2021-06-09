@@ -28,7 +28,7 @@ compileAVal (AReg reg) = compileReg reg
 compileRVal :: RVal -> String
 compileRVal (RInt i) = show i
 compileRVal (RReg reg) = compileReg reg
-compileRAddr (RAddr addr) = compileAddr addr
+compileRVal (RAddr addr) = compileAddr addr
 
 compileOVal :: OVal -> String
 compileOVal (OInt i) = show i
