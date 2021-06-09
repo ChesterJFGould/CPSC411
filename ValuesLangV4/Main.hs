@@ -10,12 +10,16 @@ import Block
 import Para
 import Paren
 
+import System.IO
+import System.Exit
+
 main :: IO ()
 main = do
        prelude <- readFile "Runtime/prelude.s"
        postlude <- readFile "Runtime/postlude.s"
-       getContents >>= ( putStrLn
-                       . either id id
+       getContents >>= ( either ( (>> exitFailure)
+                                . hPutStrLn stderr)
+                                (hPutStrLn stdout)
                        . (>>= return
                               . Paren.compile prelude postlude
                               . Para.lower

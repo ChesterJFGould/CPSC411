@@ -3,11 +3,18 @@
 asmTemp="$(mktemp).s"
 objTemp="$(mktemp).o"
 
-cabal run -v0 < "$1.es" > "$asmTemp"
+cleanUp () {
+	rm -f "$asmTemp"
+	rm -f "$objTemp"
+}
+
+if ! cabal run -v0 < "$1.es" > "$asmTemp" ; then
+	cleanUp
+	exit 1
+fi
 
 nasm -f elf64 -o "$objTemp" "$asmTemp"
 
 ld -e start -o "$1" "$objTemp"
 
-rm "$asmTemp"
-rm "$objTemp"
+cleanUp

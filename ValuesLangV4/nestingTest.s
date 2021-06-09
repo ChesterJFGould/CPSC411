@@ -18,6 +18,7 @@ jmp main4
 tc0:
 mov RSP , RSP
 add RSP , RAX
+imul RSP , 4
 mov RAX , RSP
 jmp done
 ta1:
