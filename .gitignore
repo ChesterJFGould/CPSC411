@@ -11,4 +11,6 @@
 !**/Makefile
 !**/**.cabal
 
+book.pdf
+
 **/dist-newstyle
