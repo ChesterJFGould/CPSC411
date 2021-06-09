@@ -4,7 +4,10 @@ setup_print:
 	mov r10, msg ; r10 becomes pointer into msg that we traverse backwards
 	add r10, len
 	xor r11, r11 ; r11 becomes the counter for the string length
-print_rax:
+	cmp rax, 0
+	jl rax_negative
+rax_positive:
+print_rax_positive:
 	xor rdx, rdx
 	dec r10 
 	inc r11
@@ -12,14 +15,29 @@ print_rax:
 	add rdx, '0'
 	mov [r10], dl
 	cmp rax, 0
-	jne print_rax
-.print:
+	jne print_rax_positive
+	jmp print
+rax_negative:
+	neg rax
+print_rax_negative:
+	xor rdx, rdx
+	dec r10 
+	inc r11
+	div r8
+	add rdx, '0'
+	mov [r10], dl
+	cmp rax, 0
+	jne print_rax_negative
+	dec r10
+	inc r11
+	mov BYTE [r10], '-'
+print:
 	mov rax, 1
 	mov rdi, 1
 	mov rsi, r10
 	mov rdx, r11
 	syscall
-.print_newline:
+print_newline:
 	mov rax, 1
 	mov rdi, 1
 	mov rsi, nl
