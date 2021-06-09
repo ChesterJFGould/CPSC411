@@ -19,6 +19,10 @@ lower (Program (stmts, out) i) = A.Program stmts' out'
                                                                     >> lowerExpr out)
 
 lowerStmt :: Stmt -> WriterT [A.Stmt] (State Int) ()
+lowerStmt (Set aloc (BinOp op left right)) = tell [ A.Stmt A.Set aloc' (lowerTriv left)
+                                                  , A.Stmt (lowerOp op) aloc' (lowerTriv right) ]
+                                             where aloc' = lowerAloc aloc
+
 lowerStmt (Set aloc expr) = do
                             expr' <- lowerExpr expr
                             tell [A.Stmt A.Set (lowerAloc aloc) expr']

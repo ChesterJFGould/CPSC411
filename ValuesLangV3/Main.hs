@@ -22,7 +22,7 @@ compileX86 :: String -> String -> IO ()
 compileX86 outFile input = withTempDirectory "." "build"
                            $ (\buildDir ->
                               writeFile (concat [buildDir, "/", "tmp.s"]) input
-                              -- >> hPutStr stderr input
+                              >> hPutStr stderr input
                               >> (callCommand $ unwords [ "nasm"
                                                         , "-f"
                                                         , "elf64"
