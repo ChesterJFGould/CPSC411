@@ -4,12 +4,13 @@ import Values
 import Unique
 import Monadic
 import Canonical
-import Asm
+import Asm.LowerCorrect
 import Nested
 import Block
 import Para
 import Paren
 
+import Debug.Trace
 import System.IO
 import System.Exit
 
@@ -25,7 +26,7 @@ main = do
                               . Para.lower
                               . Block.lower
                               . Nested.lower
-                              . Asm.lower
+                              . Asm.LowerCorrect.lower
                               . Canonical.lower
                               . Monadic.lower
                               . Unique.lower

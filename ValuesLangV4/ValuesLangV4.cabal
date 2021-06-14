@@ -22,6 +22,7 @@ executable ValuesLangV4
   other-modules:
 	  Asm,
 	  Asm.Lower,
+	  Asm.LowerCorrect,
 	  Asm.Types,
 	  Block,
 	  Block.Lower,

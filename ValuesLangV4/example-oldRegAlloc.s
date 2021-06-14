@@ -16,7 +16,9 @@ start:
 	mov rbp, rsp
 jmp main5
 tc0:
+mov RSP , RSP
 imul RSP , 10
+add RSP , -2
 mov RAX , RSP
 jmp done
 ta1:
@@ -42,8 +44,8 @@ setup_print:
 	mov r10, msg ; r10 becomes pointer into msg that we traverse backwards
 	add r10, len
 	xor r11, r11 ; r11 becomes the counter for the string length
-	cmp rax, 0xFFFFFFF
-	jge rax_negative
+	cmp rax, 0
+	jl rax_negative
 rax_positive:
 print_rax_positive:
 	xor rdx, rdx
@@ -68,7 +70,7 @@ print_rax_negative:
 	jne print_rax_negative
 	dec r10
 	inc r11
-	mov [r10], '-'
+	mov BYTE [r10], '-'
 print:
 	mov rax, 1
 	mov rdi, 1
