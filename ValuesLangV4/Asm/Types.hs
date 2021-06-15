@@ -6,8 +6,8 @@ data Program = Program Top
              deriving Show
 
 data Top = Halt Triv
-         | TIf Pred Top Top
          | Seq [Stmt] Top
+         | TIf Pred Top Top
          deriving Show
 
 data Stmt = Set Aloc Triv
@@ -22,8 +22,8 @@ data Op = Add
 data Pred = Bool Bool
           | RelOp RelOp Aloc Triv
           | Not Pred
-          | PIf Pred Pred Pred
           | PSeq [Stmt] Pred
+          | PIf Pred Pred Pred
           deriving Show
 
 data RelOp = Lt

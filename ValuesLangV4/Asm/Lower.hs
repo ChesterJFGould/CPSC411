@@ -1,5 +1,4 @@
 {-# LANGUAGE RecursiveDo #-}
-
 module Asm.Lower
 ( lower
 )
@@ -13,83 +12,68 @@ import Control.Monad.Tardis
 import Data.List as L
 import Data.Map as M
 import Data.Set as S
+import Graph
 
 lower :: Program -> N.Program
-lower (Program top) = N.Program $ evalTardis (lowerTop top) (S.empty, M.empty)
+lower prog = prog'
+           where prog' = lower' locs prog
+                 locs = M.map (locations !!) colours
+                 colours = colour nodes edges
+                 (nodes, edges) = conflicts prog
 
-lowerTop :: Top -> Tardis (Set Aloc) (Map Aloc N.Loc) N.Top
-lowerTop (Halt triv) = do
-                       case triv of
-                            TAloc aloc -> modifyBackwards (S.insert aloc)
-                            _ -> return ()
-                       triv' <- lowerTriv triv
-                       return $ N.Halt triv'
-lowerTop (TIf p c a) = lowerIf p c a lowerTop N.TIf
-lowerTop (Seq stmts top) = do
-                           stmts' <- lowerStmts stmts
-                           top' <- lowerTop top
-                           return $ N.Seq stmts' top'
+lower' :: Map Aloc N.Loc -> Program -> N.Program
+lower' locs (Program top) = N.Program $ lowerTop locs top
 
-lowerStmts :: [Stmt] -> Tardis (Set Aloc) (Map Aloc N.Loc) [N.Stmt]
-lowerStmts stmts = mapM lowerStmt stmts
+lowerTop :: Map Aloc N.Loc -> Top -> N.Top
+lowerTop locs (Halt triv) = N.Halt triv'
+                          where triv' = lowerTriv locs triv
+lowerTop locs (Seq stmts top) = N.Seq stmts' top'
+                              where stmts' = lowerStmts locs stmts
+                                    top' = lowerTop locs top
+lowerTop locs (TIf p c a) = N.TIf p' c' a'
+                          where p' = lowerPred locs p
+                                c' = lowerTop locs c
+                                a' = lowerTop locs a
 
-lowerStmt :: Stmt -> Tardis (Set Aloc) (Map Aloc N.Loc) N.Stmt
-lowerStmt (Set aloc triv) = do
-                            case triv of
-                                 TAloc aloc -> modifyBackwards (S.insert aloc)
-                                 _ -> return ()
-                            undeadOut <- getFuture
-                            loc <- nextLoc
-                            modifyBackwards (S.delete aloc)
-                            triv' <- lowerTriv triv
-                            modifyForwards (M.insert aloc loc)
-                            return $ N.Set loc triv'
-lowerStmt (If p c a) = lowerIf p c a lowerStmts N.If
-lowerStmt (BinOp op aloc triv) = do
-                                 modifyBackwards (S.insert aloc)
-                                 case triv of
-                                      TAloc aloc -> modifyBackwards (S.insert aloc)
-                                      _ -> return ()
-                                 loc <- lowerAloc aloc
-                                 triv' <- lowerTriv triv
-                                 return $ N.BinOp (lowerOp op) loc triv'
+lowerStmts :: Map Aloc N.Loc -> [Stmt] -> [N.Stmt]
+lowerStmts locs = L.map (lowerStmt locs)
 
-lowerPred :: Pred -> Tardis (Set Aloc) (Map Aloc N.Loc) N.Pred
-lowerPred (Bool b) = return $ N.Bool b
-lowerPred (RelOp op aloc triv) = do
-                                 modifyBackwards (S.insert aloc)
-                                 case triv of
-                                      TAloc aloc -> modifyBackwards (S.insert aloc)
-                                      _ -> return ()
-                                 loc <- lowerAloc aloc
-                                 triv' <- lowerTriv triv
-                                 return $ N.RelOp (lowerRelOp op) loc triv'
-lowerPred (Not pred) = lowerPred pred >>= return . N.Not
-lowerPred (PIf p c a) = lowerIf p c a lowerPred N.PIf
-lowerPred (PSeq stmts body) = do
-                              stmts' <- lowerStmts stmts
-                              body' <- lowerPred body
-                              return $ N.PSeq stmts' body'
+lowerStmt :: Map Aloc N.Loc -> Stmt -> N.Stmt
+lowerStmt locs (Set aloc triv) = N.Set loc triv'
+                               where loc = lowerAloc locs aloc
+                                     triv' = lowerTriv locs triv
+lowerStmt locs (BinOp op aloc triv) = N.BinOp op' loc triv'
+                                    where op' = lowerOp op
+                                          loc = lowerAloc locs aloc
+                                          triv' = lowerTriv locs triv
+lowerStmt locs (If p c a) = N.If p' c' a'
+                          where p' = lowerPred locs p
+                                c' = lowerStmts locs c
+                                a' = lowerStmts locs a
 
-lowerIf :: Pred -> a -> a -> (a -> Tardis (Set Aloc) (Map Aloc N.Loc) b)
-           -> (N.Pred -> b -> b -> c) -> Tardis (Set Aloc) (Map Aloc N.Loc) c
-lowerIf p c a lowerBody consIf = mdo
-                                 p' <- lowerPred p
-                                 sendPast (S.union cUndeadIn aUndeadIn)
-                                 cUndeadIn <- getFuture
-                                 c' <- lowerBody c
-                                 sendPast undeadOut
-                                 aUndeadIn <- getFuture
-                                 a' <- lowerBody a
-                                 undeadOut <- getFuture
-                                 return $ consIf p' c' a'
+lowerPred :: Map Aloc N.Loc -> Pred -> N.Pred
+lowerPred locs (Bool b) = N.Bool b
+lowerPred locs (RelOp op aloc triv) = N.RelOp op' loc triv'
+                                    where op' = lowerRelOp op
+                                          loc = lowerAloc locs aloc
+                                          triv' = lowerTriv locs triv
+lowerPred locs (Not pred) = N.Not pred'
+                          where pred' = lowerPred locs pred
+lowerPred locs (PSeq stmts pred) = N.PSeq stmts' pred'
+                                 where stmts' = lowerStmts locs stmts
+                                       pred' = lowerPred locs pred
+lowerPred locs (PIf p c a) = N.PIf p' c' a'
+                           where p' = lowerPred locs p
+                                 c' = lowerPred locs c
+                                 a' = lowerPred locs a
 
-lowerTriv :: Triv -> Tardis (Set Aloc) (Map Aloc N.Loc) N.Triv
-lowerTriv (Int i) = return $ N.Int i
-lowerTriv (TAloc aloc) = lowerAloc aloc >>= return . N.Loc
+lowerTriv :: Map Aloc N.Loc -> Triv -> N.Triv
+lowerTriv locs (Int i) = N.Int i
+lowerTriv locs (TAloc aloc) = N.Loc loc
+                            where loc = lowerAloc locs aloc
 
-lowerAloc :: Aloc -> Tardis (Set Aloc) (Map Aloc N.Loc) N.Loc
-lowerAloc aloc = getPast >>= return . (! aloc)
+lowerAloc :: Map Aloc N.Loc -> Aloc -> N.Loc
+lowerAloc map aloc = map ! aloc
 
 lowerOp :: Op -> N.Op
 lowerOp Add = N.Add
@@ -119,13 +103,72 @@ locations = L.map N.Reg [ N.RSP
                         , N.R15 ]
             ++ L.map N.Addr [0..]
 
-firstNotIn :: [N.Loc] -> Set N.Loc -> N.Loc
-firstNotIn (loc : rest) locs
-           | loc `S.member` locs = firstNotIn rest locs
-           | otherwise = loc
+conflicts :: Program -> (Set Aloc, Set (Aloc, Aloc))
+conflicts (Program top) = conflictSet
+                        where (_, conflictSet) = execTardis (topConflicts top)
+                                                            (S.empty, (S.empty, S.empty))
 
-nextLoc :: Tardis (Set Aloc) (Map Aloc N.Loc) N.Loc
-nextLoc = do
-          undeadIn <- getFuture
-          env <- getPast
-          return $ firstNotIn locations (S.map (env !) undeadIn)
+type ConflictState a = Tardis (Set Aloc) (Set Aloc, Set (Aloc, Aloc)) a
+
+topConflicts :: Top -> ConflictState ()
+topConflicts (Halt triv) = setUndeadTriv triv
+topConflicts (Seq stmts top) = stmtsConflicts stmts >> topConflicts top
+topConflicts (TIf p c a) = ifConflicts p c a topConflicts
+
+stmtsConflicts :: [Stmt] -> ConflictState ()
+stmtsConflicts = (>> return ()) . mapM stmtConflicts
+
+stmtConflicts :: Stmt -> ConflictState ()
+stmtConflicts (Set aloc triv) = do
+                                setUndeadTriv triv
+                                undeadWithoutTriv triv >>= conflict aloc
+                                setDeadAloc aloc
+stmtConflicts (BinOp _ aloc triv) = do
+                                    setUndeadTriv triv
+                                    setUndeadAloc aloc
+                                    undeadWithoutAloc aloc >>= conflict aloc
+stmtConflicts (If p c a) = ifConflicts p c a stmtsConflicts
+
+predConflicts :: Pred -> ConflictState ()
+predConflicts (Bool _) = return ()
+predConflicts (RelOp _ _ _) = return ()
+predConflicts (Not pred) = predConflicts pred
+predConflicts (PIf p c a) = ifConflicts p c a predConflicts
+predConflicts (PSeq stmts pred) = stmtsConflicts stmts >> predConflicts pred
+
+ifConflicts :: Pred -> a -> a -> (a -> ConflictState ()) -> ConflictState ()
+ifConflicts p c a calcConflicts = mdo
+                                  predConflicts p
+                                  sendPast (S.union cUndeadIn aUndeadIn)
+                                  cUndeadIn <- getFuture
+                                  calcConflicts c
+                                  sendPast undeadOut
+                                  aUndeadIn <- getFuture
+                                  calcConflicts a
+                                  undeadOut <- getFuture
+                                  return ()
+
+conflict :: Aloc -> Set Aloc -> ConflictState ()
+conflict aloc set = do
+                    (nodes, edges) <- getPast
+                    sendFuture ( S.insert aloc nodes
+                               , S.foldr (S.insert . (,) aloc)
+                                         edges
+                                         set )
+
+setDeadAloc :: Aloc -> ConflictState ()
+setDeadAloc = modifyBackwards . S.delete
+
+setUndeadAloc :: Aloc -> ConflictState ()
+setUndeadAloc = modifyBackwards . S.insert
+
+setUndeadTriv :: Triv -> ConflictState ()
+setUndeadTriv (Int _) = return ()
+setUndeadTriv (TAloc aloc) = setUndeadAloc aloc
+
+undeadWithoutAloc :: Aloc -> ConflictState (Set Aloc)
+undeadWithoutAloc aloc = getFuture >>= return . S.delete aloc
+
+undeadWithoutTriv :: Triv -> ConflictState (Set Aloc)
+undeadWithoutTriv (Int _) = getFuture
+undeadWithoutTriv (TAloc aloc) = undeadWithoutAloc aloc

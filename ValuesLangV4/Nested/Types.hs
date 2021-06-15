@@ -22,8 +22,8 @@ data Op = Add
 data Pred = Bool Bool
           | RelOp RelOp Loc Triv
           | Not Pred
-          | PIf Pred Pred Pred
           | PSeq [Stmt] Pred
+          | PIf Pred Pred Pred
           deriving Show
 
 data RelOp = Lt

@@ -4,7 +4,7 @@ import Values
 import Unique
 import Monadic
 import Canonical
-import Asm.LowerCorrect
+import Asm
 import Nested
 import Block
 import Para
@@ -26,7 +26,7 @@ main = do
                               . Para.lower
                               . Block.lower
                               . Nested.lower
-                              . Asm.LowerCorrect.lower
+                              . Asm.lower
                               . Canonical.lower
                               . Monadic.lower
                               . Unique.lower
