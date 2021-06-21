@@ -50,6 +50,7 @@ lowerStmt (If p c a) = [ A.If p' c' a' ]
 lowerPred :: Pred -> A.Pred
 lowerPred (Bool b) = A.Bool b
 lowerPred (RelOp op (Int a) (Int b)) = A.Bool $ reifyRelOp op a b
+lowerPred (RelOp op (Int i) (TAloc aloc)) = lowerPred (Not (RelOp op (TAloc aloc) (Int i)))
 lowerPred (RelOp op (TAloc aloc) triv) = A.RelOp op' aloc' triv'
                                        where op' = lowerRelOp op
                                              aloc' = lowerAloc aloc

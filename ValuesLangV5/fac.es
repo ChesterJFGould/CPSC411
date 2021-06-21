@@ -1,9 +1,9 @@
-fac n = fac' n 1
-
-fac' n acc = if n < 1
-             then acc
-             else let acc' = acc * n
-                    | n' = n - 1
-                    in fac' n' acc'
-
-fac 10
+fac n = facPrime n 1
+;
+facPrime n acc = if n < 1
+                 then if true then acc else acc
+                 else let accPrime = acc * n
+                        | nPrime = n + -1
+                        in facPrime nPrime accPrime
+;
+fac 12

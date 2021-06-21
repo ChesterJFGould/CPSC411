@@ -131,7 +131,7 @@ stmtConflicts (If p c a) = ifConflicts p c a stmtsConflicts
 
 predConflicts :: Pred -> ConflictState ()
 predConflicts (Bool _) = return ()
-predConflicts (RelOp _ _ _) = return ()
+predConflicts (RelOp _ aloc triv) = setUndeadAloc aloc >> setUndeadTriv triv
 predConflicts (Not pred) = predConflicts pred
 predConflicts (PIf p c a) = ifConflicts p c a predConflicts
 predConflicts (PSeq stmts pred) = stmtsConflicts stmts >> predConflicts pred

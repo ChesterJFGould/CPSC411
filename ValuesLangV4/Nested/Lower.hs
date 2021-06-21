@@ -54,7 +54,7 @@ lowerStmts' acc (BinOp op loc triv : rest) next = lowerStmts' acc' rest next
                                                       triv' = lowerTriv triv
 lowerStmts' acc (If p c a : rest) next = do
                                          after <- lowerStmts rest next
-                                         next' <- label "next" next >>= return . B.Jump
+                                         next' <- label "next" after >>= return . B.Jump
                                          cLabel <- lowerStmts c next' >>= label "seq"
                                          aLabel <- lowerStmts a next' >>= label "seq"
                                          p' <- lowerPred cLabel aLabel p

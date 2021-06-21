@@ -1,5 +1,5 @@
 # Pipeline
-`Values -> Unique -> Monadic -> Canonical -> Asm -> Nested -> --Pred-- -> Block -> Para -> Paren`.
+`Values -> Unique -> Monadic -> Canonical -> Asm -> Nested -> --Pred-- -> Block -> Para -> Paren -> x86`.
 
 # Paren-x64 v4
 + Extremely similar to v2, we just add labels, conditional and unconditional
