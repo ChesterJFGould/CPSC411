@@ -20,17 +20,35 @@ extra-source-files:  CHANGELOG.md
 executable ValuesLangV6
   main-is:             Main.hs
   other-modules:
+	  Asm,
+	  Asm.Lower,
 	  Asm.Types,
+	  Block,
+	  Block.Lower,
 	  Block.Types,
+	  Canonical,
+	  Canonical.Lower,
 	  Canonical.Types,
 	  Compiler.Types,
 	  Compiler.Values,
+	  Graph.Colour,
 	  Monadic,
 	  Monadic.Lower,
 	  Monadic.Types,
+	  Nested,
+	  Nested.Lower,
 	  Nested.Types,
+	  Para,
+	  Para.Lower,
 	  Para.Types,
-	  Paren.Types
+	  Paren,
+	  Paren.Compile,
+	  Paren.Types,
+	  Undead,
+	  Undead.JumpRetSave,
+	  Undead.Lower,
+	  Undead.Patch
+	  Undead.Types
 	  Unique,
 	  Unique.Lower,
 	  Unique.Types,
@@ -44,7 +62,8 @@ executable ValuesLangV6
 	  base >=4.13 && <4.14,
 	  containers,
 	  megaparsec,
-	  mtl
+	  mtl,
+	  tardis
   hs-source-dirs:
 	  .,
 	  Asm,
@@ -55,6 +74,7 @@ executable ValuesLangV6
 	  Nested,
 	  Para,
 	  Paren,
+	  Undead,
 	  Unique,
 	  Values
   default-language:    Haskell2010

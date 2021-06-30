@@ -60,3 +60,13 @@ this is very similar to CPS-transform.
   blessed to be the top level of a function or program body.
   e.g. `data Block = Block Label Entry`, `data Program = Program [Block] Entry`.
 
+# Asm
++ We need undead-out info to know which variables to save across calls. Therefore
+  that must be done in this stage before register allocation. We will do it by
+  splitting off the `conflicts` function into `saveCalls` and `conflicts` functions
+  which will then be dispatched through an `analyze` function which will return
+  the new AST, and the conflict graph nodes and edges. This will be split off into
+  its own module. In the future we should look for a good way to just tag each
+  node with its undead-out set and then split up these functions into separate
+  stages. `Implementing Functional Programming Languages` may have some info on
+  how to do this cleanly.

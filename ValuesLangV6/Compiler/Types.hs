@@ -2,11 +2,11 @@ module Compiler.Types where
 
 data MLoc = MAloc Aloc
           | MRloc Loc
-          deriving Show
+          deriving (Eq, Ord, Show)
 
 data Loc = Reg Reg
          | LAddr Addr
-         deriving Show
+         deriving (Eq, Ord, Show)
 
 data Reg = RSP
          | RBP
@@ -24,13 +24,13 @@ data Reg = RSP
          | R13
          | R14
          | R15
-         deriving Show
+         deriving (Eq, Ord, Show)
 
 data Addr = Addr Int
-          deriving Show
+          deriving (Eq, Ord, Show)
 
 data Aloc = Aloc String Int
-          deriving Show
+          deriving (Eq, Ord, Show)
 
 data Label = Label String
            deriving Show

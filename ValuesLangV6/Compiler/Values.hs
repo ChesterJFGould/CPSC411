@@ -23,6 +23,15 @@ returnRegister = RAX
 linkRegister :: Reg
 linkRegister = R15
 
+frameRegister :: Reg
+frameRegister = RBP
+
+tempRegister1 :: Reg
+tempRegister1 = R10
+
+tempRegister2 :: Reg
+tempRegister2 = R11
+
 generalLocations :: [Loc]
 generalLocations = map Reg generalRegisters
                    ++ map LAddr generalAddresses
@@ -44,3 +53,4 @@ generalRegisters = [ RSP
 
 generalAddresses :: [Addr]
 generalAddresses = map Addr [0..]
+

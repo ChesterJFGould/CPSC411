@@ -5,7 +5,7 @@ import Compiler.Types
 data Program = Program [Func] Body
              deriving Show
 
-data Func = Func Label [Aloc] Body -- Name Args (Link Register Location) Body
+data Func = Func Label [Aloc] Body
           deriving Show
 
 data Body = Body Aloc Tail
