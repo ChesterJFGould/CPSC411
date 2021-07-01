@@ -7,4 +7,4 @@ fac n = if n < 1
 pred n = let one = 1
          in n - one
 ;
-fac 10
+fac 11
