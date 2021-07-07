@@ -8,7 +8,12 @@ data Program = Program [Block] Body
 
 data Block = Bloc Label Body
 
-data Body = Body Aloc Expr
+data Body = Body Aloc Tail
+        
+data Tail = Expr Expr
+          | TSeq [Stmt] Tail
+          | TIf Pred Tail Tail
+          | Jump Label [Mloc]
 
 data Expr = Triv MTriv
           | BinOp BinOp MTriv MTriv
