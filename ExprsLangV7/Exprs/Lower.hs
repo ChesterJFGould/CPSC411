@@ -37,7 +37,7 @@ genFuncLabel :: Func -> Env Label
 genFuncLabel (Func name _ _) = genLabel name
 
 genPrimDefs :: Env [U.Func]
-genPrimDefs = (++) <$> mapM genNumBinOp [ ("*", "add", U.Add)
+genPrimDefs = (++) <$> mapM genNumBinOp [ ("+", "add", U.Add)
                                         , ("-", "sub", U.Sub)
                                         , ("*", "mul", U.Mul)
                                         , ("<", "lt", U.Lt)

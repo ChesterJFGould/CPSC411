@@ -5,31 +5,31 @@ import Compiler.Types
 import Data.Set
 import Data.Word
 
-type Tagged tag val = (tag, val)
+data Program = Program [Block] Body
+             deriving Show
 
-type Undead val = Tagged (Set Mloc) val
-
-data Program = Program [Block] TBody
-
-data Block = Block Label TBody
-
-type TBody = Tagged (Set Aloc, Set (Mloc, Mloc)) Body
+data Block = Block Label Body
+           deriving Show
 
 data Body = Body Tail
+          deriving Show
 
 data Tail = Seq [TStmt] Tail
           | TIf Pred Tail Tail
           | Jump MPlace [Mloc]
+          deriving Show
 
-type TStmt = Undead Stmt
+type TStmt = (Set Mloc, Stmt)
 
 data Stmt = Set Mloc MTriv
           | BinOp BinOp Mloc MTriv
           | If Pred [TStmt] [TStmt]
           | JumpRet Label [Mloc]
+          deriving Show
 
-data Pred = Bool
+data Pred = Bool Bool
           | RelOp RelOp Mloc MTriv
           | Not Pred
           | PSeq [TStmt] Pred
           | PIf Pred Pred Pred
+          deriving Show

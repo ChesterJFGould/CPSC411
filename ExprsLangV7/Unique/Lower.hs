@@ -55,7 +55,7 @@ lowerUnOp Not expr = B.If (lowerPred expr)
 lowerBinOp :: U.BinOp -> Expr -> Expr -> B.Expr
 lowerBinOp U.Add a b = B.BinOp C.Add (lowerExpr a) (lowerExpr b)
 lowerBinOp U.Sub a b = B.BinOp C.Sub (lowerExpr a) (lowerExpr b)
-lowerBinOp U.Mul a b = B.BinOp C.Mul (B.BinOp Shr (lowerExpr a) (lowerExpr (Triv (Value (Int 3)))))
+lowerBinOp U.Mul a b = B.BinOp C.Mul (B.BinOp Shr (lowerExpr a) (B.Triv (APtr (Ptr 3))))
                                      (lowerExpr b)
 lowerBinOp U.Lt a b = predExpr (B.RelOp C.Lt (lowerExpr a) (lowerExpr b))
 lowerBinOp U.Gt a b = predExpr (B.RelOp C.Gt (lowerExpr a) (lowerExpr b))

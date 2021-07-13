@@ -6,4 +6,4 @@ fib n = if n < 2 then 0
                     | b = fib b
                     in a + b
 ;
-fib 50
+fib 10

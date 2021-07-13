@@ -20,12 +20,19 @@ extra-source-files:  CHANGELOG.md
 executable ExprsLangV7
   main-is:             Main.hs
   other-modules:
+	  Asm,
+	  Asm.Lower,
 	  Asm.Types,
 	  Bits,
 	  Bits.Lower,
 	  Bits.Types,
+	  Blocks,
+	  Blocks.Lower,
 	  Blocks.Types,
+	  Canonical,
+	  Canonical.Lower,
 	  Canonical.Types,
+	  Compiler.Locs,
 	  Compiler.Ptrs,
 	  Compiler.Types,
 	  Compiler.Value,
@@ -33,24 +40,50 @@ executable ExprsLangV7
 	  Exprs.Lower,
 	  Exprs.Parse,
 	  Exprs.Types,
+	  Graph.Colour,
+	  Monadic,
+	  Monadic.Lower,
 	  Monadic.Types,
+	  Nested,
+	  Nested.Lower,
 	  Nested.Types,
+	  Para,
+	  Para.Lower,
 	  Para.Types,
+	  Paren,
+	  Paren.Compile,
 	  Paren.Types,
+	  Undead,
+	  Undead.AnalyzeConflicts,
+	  Undead.CallSave,
+	  Undead.Lower,
 	  Undead.Types,
 	  Unique,
 	  Unique.Lower,
 	  Unique.Types,
+	  Values,
+	  Values.Lower,
 	  Values.Types
   -- other-extensions:
   build-depends:
 	  base >=4.13 && <4.14,
 	  megaparsec,
 	  containers,
-	  mtl
+	  mtl,
+	  pretty-simple,
+	  rev-state
   hs-source-dirs:
 	  .,
+	  Asm,
 	  Bits,
+	  Blocks,
+	  Canonical,
 	  Exprs,
-	  Unique
+	  Monadic,
+	  Nested,
+	  Para,
+	  Paren,
+	  Undead,
+	  Unique,
+	  Values
   default-language:    Haskell2010

@@ -49,9 +49,11 @@
   of a body to appropriate value and blocks which return now jump to it.
 
 # Undead
-+ We add the undead-out set to each `Stmt` and the set of all `Aloc`, and
-  `(Mloc, Mloc)` conflicts to each body.
-+ We then use this info to save all undead alocs across each call.
++ ~~We add the undead-out set to each `Stmt` and the set of all `Aloc`, and
+  `(Mloc, Mloc)` conflicts to each body~~.
++ We add the undead-out set as a tag to each `Stmt`. This info is then used to
+  save alocs across calls. Conflict analysis is then performed at the beginning
+  of the following lowering phase.
 
 # Nested
 + `Mloc` are replaced with `Rloc` via register allocation.

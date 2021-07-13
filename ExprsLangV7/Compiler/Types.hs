@@ -8,17 +8,17 @@ type Gensym = State Int64
 
 data Mloc = MAloc Aloc
           | MRloc Rloc
-          deriving Show
+          deriving (Eq, Ord, Show)
 
 data Aloc = Aloc String Int64
-          deriving Show
+          deriving (Eq, Ord, Show)
 
-data Rloc = LAddr Addr
-          | Reg Reg
-          deriving Show
+data Rloc = Reg Reg
+          | LAddr Addr
+          deriving (Eq, Ord, Show)
 
 data Addr = Addr Int
-          deriving Show
+          deriving (Eq, Ord, Show)
 
 data Label = Label String Int64
            deriving Show
@@ -34,8 +34,9 @@ data MTriv = TMloc Mloc
            | MPtr Ptr
            deriving Show
 
-data RTriv = TRloc Aloc
-           | RPtr Ptr
+data RTriv = RPtr Ptr
+           | TRLabel Label
+           | TRloc Rloc
            deriving Show
 
 data MPlace = PMloc Mloc
@@ -79,4 +80,4 @@ data Reg = RSP
          | R13
          | R14
          | R15
-         deriving Show
+         deriving (Eq, Ord, Show)

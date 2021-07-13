@@ -16,19 +16,19 @@ intTag :: Tag
 intTag = Tag 0b0 0b111
 
 boolTag :: Tag
-boolTag = Tag 0b110 0xF
+boolTag = Tag 0b110 0xFF
 
 emptyTag :: Tag
-emptyTag = Tag 0b10110 0xF
+emptyTag = Tag 0b10110 0xFF
 
 voidTag :: Tag
-voidTag = Tag 0b11110 0xF
+voidTag = Tag 0b11110 0xFF
 
 charTag :: Tag
-charTag = Tag 0b101110 0xF
+charTag = Tag 0b101110 0xFF
 
 errorTag :: Tag
-errorTag = Tag 0b111110 0xF
+errorTag = Tag 0b111110 0xFF
 
 truePtr :: Ptr
 truePtr = Ptr (tag + 0b1000)
@@ -48,8 +48,8 @@ voidPtr = Ptr tag
 
 toPtr :: Value -> Ptr
 toPtr (Int i) = Ptr (tagVal (fromIntegral i) intTag)
-toPtr (Bool True) = falsePtr
-toPtr (Bool False) = truePtr
+toPtr (Bool True) = truePtr
+toPtr (Bool False) = falsePtr
 toPtr Empty = emptyPtr
 toPtr Void = voidPtr
 toPtr (Error code) = Ptr (tagVal (fromIntegral code) errorTag)
