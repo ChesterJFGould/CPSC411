@@ -18,7 +18,7 @@ done:
 	cmp r8, 0b111110 ; Error tag
 	je print_error
 print_int:
-	shr rax, 3
+	sar rax, 3
 	mov r8, 10 ; we need to div by 10
 	mov r10, msg ; r10 becomes pointer into msg that we traverse backwards
 	add r10, len
