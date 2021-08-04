@@ -5,7 +5,7 @@ import Compiler.Types
 import Control.Monad.State
 import Data.Int
 
-type Gensym a = State Int64 a
+type Gensym = State Int64
 
 genAloc :: String -> Gensym Aloc
 genAloc template = do

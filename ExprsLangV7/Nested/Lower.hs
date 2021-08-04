@@ -40,6 +40,7 @@ lowerStmts' :: [B.Stmt] -> B.Tail -> [Stmt] -> Blocks B.Tail
 lowerStmts' acc tail [] = return (B.Seq (reverse acc) tail)
 lowerStmts' acc tail (Set loc triv : rest) = lowerStmts' (B.Set loc triv : acc) tail rest
 lowerStmts' acc tail (BinOp op loc triv : rest) = lowerStmts' (B.BinOp op loc triv : acc) tail rest
+-- This is WRONG, we just discard acc. Oops
 lowerStmts' acc tail (If p c a : rest) = do
                                          tail' <- (B.Jump . RLabel) <$> (lowerStmts rest tail >>= label "continuation")
                                          c' <- lowerStmts c tail'

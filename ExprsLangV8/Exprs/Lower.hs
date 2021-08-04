@@ -41,7 +41,7 @@ genPrimDefs = do
                                 , ("==", "eq", U.Eq, Nothing, Nothing, 0)
                                 , ("<=", "lte", U.Lte, Just U.IsInt, Just U.IsInt, 6)
                                 , (">=", "gte", U.Gte, Just U.IsInt, Just U.IsInt, 7)
-                                , ("/=", "neq ", U.Neq, Nothing, Nothing, 0)
+                                , ("/=", "neq", U.Neq, Nothing, Nothing, 0)
                                 , ("::", "cons", U.Cons, Nothing, Nothing, 0) ]
               unOpDefs <- mapM genUnOp
                                [ ("int?", "isInt", U.IsInt, Nothing, 0)

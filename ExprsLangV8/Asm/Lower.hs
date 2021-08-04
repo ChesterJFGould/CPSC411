@@ -30,7 +30,7 @@ lowerBody (Body tail) = U.Body (evalState (lowerTail tail) S.empty)
 
 lowerTail :: Tail -> Undead U.Tail
 lowerTail (Jump place used) = do
-                              mapM setLocDead used
+                              mapM setLocUndead used
                               return (U.Jump place used)
 lowerTail (Seq stmts tail) = U.Seq <$> lowerStmts stmts
                                    <*> lowerTail tail
@@ -77,7 +77,10 @@ lowerStmt (If p c a) = mdo
 
 lowerPred :: Pred -> Undead U.Pred
 lowerPred (Bool b) = return (U.Bool b)
-lowerPred (RelOp op a b) = return (U.RelOp op a b)
+lowerPred (RelOp op a b) = do
+                           setLocUndead a
+                           setTrivUndead b
+                           return (U.RelOp op a b)
 lowerPred (Not pred) = U.Not <$> lowerPred pred
 lowerPred (PSeq stmts pred) = U.PSeq <$> lowerStmts stmts
                                      <*> lowerPred pred

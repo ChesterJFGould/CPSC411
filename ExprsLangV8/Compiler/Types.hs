@@ -16,12 +16,15 @@ data Rloc = Reg Reg
           deriving (Eq, Ord, Show)
 
 data Addr = Stack Int32
-          | Offset Reg Int32
-          | Pointer Reg Reg
+          | Pointer AddrTriv AddrTriv
           deriving (Eq, Ord, Show)
 
+data AddrTriv = AddrReg Reg
+              | AddrLit Lit
+              deriving (Eq, Ord, Show)
+
 data Lit = Lit Word64
-         deriving Show
+         deriving (Eq, Ord, Show)
 
 data ATriv = AAloc Aloc
            | ALit Lit
@@ -33,17 +36,18 @@ data MTriv = MMloc Mloc
 
 data RTriv = RRloc Rloc
            | RLit Lit
+           | RLabel Label
            deriving Show
 
 data Label = Label String Int64
-           deriving Show
+           deriving (Eq, Ord, Show)
 
 data MPlace = PMloc Mloc
             | MLabel Label
             deriving Show
 
 data RPlace = PRloc Rloc
-            | RLabel Label
+            | PLabel Label
             deriving Show
 
 data BinOp = Add

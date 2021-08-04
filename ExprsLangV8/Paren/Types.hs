@@ -4,6 +4,7 @@ import Compiler.Types
 import Data.Word
 
 data Program = Program [Stmt]
+             deriving Show
 
 data Stmt = SetReg Reg RVal
           | SetAddr Addr AVal
@@ -12,15 +13,19 @@ data Stmt = SetReg Reg RVal
           | JumpIf RelOp Label
           | Jump RPlace
           | Labelled Label Stmt
+          deriving Show
 
-data RVal = RLit Word64
+data RVal = RLit Lit
           | RReg Reg
           | RAddr Addr
           | RLabel Label
+          deriving Show
 
 data AVal = AReg Reg
           | ALabel Label
+          deriving Show
 
 data OVal = OReg Reg
           | OAddr Addr
           | OLabel Label
+          deriving Show

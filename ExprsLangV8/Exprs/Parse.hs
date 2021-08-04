@@ -65,7 +65,7 @@ if' = If <$> (symbol "if" >> hspace >> expr)
 
 apply :: Parser Expr -> Parser Expr
 apply p = try ( Apply <$> (var <* hspace1)
-                      <*> (p `sepEndBy` hspace) )
+                      <*> (p `sepEndBy1` hspace) )
           <|> p
           <?> "function application"
 

@@ -35,7 +35,9 @@ lowerTail lr expr@(Triv _) = lowerReturn lr (lowerExpr expr)
 lowerTail lr expr@(BinOp _ _ _) = lowerReturn lr (lowerExpr expr)
 lowerTail lr expr@(MRef _ _) = lowerReturn lr (lowerExpr expr)
 lowerTail lr expr@(Alloc _) = lowerReturn lr (lowerExpr expr)
-lowerTail lr (Call f args) = M.TSeq argStmts (M.Jump (MLabel f) undeadOut)
+lowerTail lr (Call f args) = M.TSeq argStmts
+                                    (M.TSeq [M.Set ((MRloc . Reg) linkRegister) (M.Triv (MMloc lr)) ]
+                                            (M.Jump (MLabel f) undeadOut))
                            where (argStmts, undeadOut) = lowerArgs args
 lowerTail lr (Let assignments expr) = M.TSeq (lowerAssignments assignments)
                                              (lowerTail lr expr)

@@ -2,9 +2,14 @@ module Main where
 
 import Asm
 import Bits
+import Blocks
 import Canonical
 import Exprs
 import Monadic
+import Nested
+import Para
+import Paren
+import Undead
 import Unique
 import Values
 
@@ -13,9 +18,18 @@ import Control.Monad.State
 import Text.Pretty.Simple
 
 main :: IO ()
-main = getContents >>= either putStrLn pPrintForceColor
+main = do
+       prelude <- readFile "Runtime/prelude.s"
+       postlude <- readFile "Runtime/postlude2.s"
+       getContents >>= putStrLn
+                       . either id id
                        . (>>= return
                               . flip evalState 0
+                              . liftM (Paren.compile prelude postlude)
+                              . liftM Para.lower
+                              . liftM Blocks.lower
+                              . (>>= Nested.lower)
+                              . liftM Undead.lower
                               . liftM Asm.lower
                               . (>>= Canonical.lower)
                               . liftM Monadic.lower

@@ -1,0 +1,28 @@
+global start
+extern printf
+
+section .text
+
+start:
+	; init stack
+	mov rax, 9 ; mmap
+	mov rdi, 0 ; page aligned
+	mov rsi, 8388608 ; 8 MiB
+	mov rdx, 3 ; rw
+	mov r10, 34 ; map type = memory
+	mov r8, -1 ; not a fd
+	mov r9, 0 ; offset
+	syscall
+	mov rbp, rsp
+	; init heap
+	mov rax, 9 ; mmap
+	mov rdi, 0 ; page aligned
+	mov rsi, 8388608 ; 8 MiB
+	mov rdx, 3 ; rw
+	mov r10, 34 ; map type = memory
+	mov r8, -1 ; not a fd
+	mov r9, 0 ; offset
+	syscall
+	sub rsp, 8288608; Why 8288608 and not 8388608? Because 8388608 segfaults and
+	                ; 8288608 doesn't, that's why.
+	mov r15, done ; setup return address

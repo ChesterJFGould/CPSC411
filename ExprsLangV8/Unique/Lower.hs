@@ -74,11 +74,12 @@ lowerUnOp IsInt arg = hasTag intTag arg
 lowerUnOp IsBool arg = do
                        arg' <- genAloc "tmp"
                        let arg'' = (Triv (TAloc arg'))
-                       lowerExpr (If (BinOp U.Eq arg'' (Triv (Value (Bool True))))
-                                     (Triv (Value (Bool True)))
-                                     (If (BinOp U.Eq arg'' (Triv (Value (Bool False))))
-                                         (Triv (Value (Bool True)))
-                                         (Triv (Value (Bool False)))))
+                       lowerExpr (Let [(arg', arg)]
+                                      (If (BinOp U.Eq arg'' (Triv (Value (Bool True))))
+                                          (Triv (Value (Bool True)))
+                                          (If (BinOp U.Eq arg'' (Triv (Value (Bool False))))
+                                              (Triv (Value (Bool True)))
+                                              (Triv (Value (Bool False))))))
 lowerUnOp IsEmpty arg = hasTag emptyTag arg
 lowerUnOp IsVoid arg = hasTag voidTag arg
 lowerUnOp IsChar arg = hasTag charTag arg
@@ -96,11 +97,18 @@ lowerUnOp Cdr arg = do
                                    (B.Triv (ALit (Lit 8))))
 lowerUnOp MakeVector arg = do
                            arg' <- lowerExpr arg
-                           return (giveTag vectorTag (B.Alloc (B.BinOp C.Mul
-                                                                       (B.BinOp C.Add
-                                                                                arg'
-                                                                                (intExpr 1))
-                                                                       (intExpr 8))))
+                           len <- genAloc "len"
+                           tmp <- genAloc "tmp"
+                           let tmp' = (B.Triv (AAloc tmp))
+                               len' = (B.Triv (AAloc len))
+                           return (B.Let [(len, (B.BinOp C.Shr arg' (intExpr 3)))]
+                                         (B.Let [(tmp, (B.Alloc (B.BinOp C.Mul
+                                                                         (B.BinOp C.Add
+                                                                                  tmp'
+                                                                                  (intExpr 1))
+                                                                         (intExpr 8))))]
+                                                (B.Seq [ B.MSet tmp' (intExpr 0) arg' ]
+                                                       (giveTag vectorTag tmp'))))
 lowerUnOp VectorLength arg = do
                              arg' <- lowerExpr arg
                              return (B.MRef (B.BinOp C.And arg' (intExpr (complement 0xF)))
