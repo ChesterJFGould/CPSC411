@@ -1,29 +1,25 @@
 module Unique.Types where
 
-data Program = Program [Def] Body
+import Compiler.Types
+
+data Program = Program ProgramDef
+             deriving Show
+
+data ProgramDef = ProgramBody Body
+                | LetDef Def ProgramDef
+                | LetRecDef [Def] ProgramDef
+                deriving Show
 
 data Def = Def Label [Aloc] Body
+         deriving Show
 
 data Body = Body Expr
+          deriving Show
 
-data Expr = Triv Triv
+data Expr = Value Value
           | BinOp BinOp Expr Expr
           | Apply Expr Expr
           | Let Aloc Expr Expr
           | Lambda Aloc Expr
           | If Expr Expr Expr
-
-data Triv = Int Integer
-          | Bool Bool
-          | TAloc Aloc
-          | TLabel Label
-
-data BinOp = Add
-           | Sub
-           | Mul
-           | Lt
-           | Gt
-           | Eq
-           | Lte
-           | Gte
-           | Neq
+          deriving Show

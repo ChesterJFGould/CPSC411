@@ -11,7 +11,7 @@ data Tail = Jump RTriv
           | TIf Pred Tail Tail
 
 data Stmt = Set Rloc RTriv
-          | BinOp BinOp Rloc RTriv
+          | NumOp NumOp Rloc RTriv
           | MRef Rloc RTriv RTriv
           | MSet RTriv RTriv RTriv
           | JumpRet RTriv

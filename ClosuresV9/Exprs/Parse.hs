@@ -3,6 +3,7 @@ module Exprs.Parse
 )
 where
 
+import Exprs.Sort
 import Exprs.Types
 
 import Data.Foldable
@@ -19,12 +20,12 @@ type Parser a = Parsec Void String a
 exprOps = ( [ binopsl [ ("+", BinOp Add)
                       , ("-", BinOp Sub)
                       ]
-            , binopsl [ ("<", BinOp Lt)
-                      , (">", BinOp Gt)
-                      , ("==", BinOp Eq)
+            , binopsl [ ("==", BinOp Eq)
                       , ("<=", BinOp Lte)
                       , (">=", BinOp Gte)
                       , ("/=", BinOp Neq)
+                      , (">", BinOp Gt)
+                      , ("<", BinOp Lt)
                       ]
             , binopsl [ ("*", BinOp Mul) ]
             , application
@@ -39,14 +40,14 @@ typeOps = ( [ binopsr [ ("->", TFunc) ] ]
 keywords = ["let", "in", "if", "then", "else", "True", "False"]
 
 parse :: String -> String -> Either String Program
-parse = ((.) . (.)) (either (Left . errorBundlePretty) Right) parseProg
+parse file input = (either (Left . errorBundlePretty) (Right . sort)) (parseProg file input)
 
 parseProg :: String -> String -> Either (ParseErrorBundle String Void) Program
 parseProg = M.parse prog
 
 prog :: Parser Program
-prog = Program <$> ((def <* hspace) `sepEndBy` (char ';'))
-               <*> (hspace *> body <* hspace <* eof)
+prog = Program <$> (LetRecDef <$> ((def <* hspace) `sepEndBy` (char ';'))
+                              <*> (ProgramBody <$> (hspace *> body <* hspace <* eof)))
 
 def :: Parser Def
 def = do
@@ -92,19 +93,19 @@ if' = If <$> (symbol "if" >> hspace >> expr)
 
 lambda :: Parser Expr
 lambda = Lambda <$> (char 'λ' >> hspace >> var)
-                <*> (char ':' >> hspace >> type')
+                <*> (hspace >> char ':' >> hspace >> type')
                 <*> (hspace >> char '.' >> hspace >> expr)
 
 triv :: Parser Expr
-triv = Triv <$> asum [ int
-                     , bool
-                     , TVar <$> var
-                     ]
+triv = Value <$> asum [ int
+                      , bool
+                      , TVar <$> var
+                      ]
 
-int :: Parser Triv
+int :: Parser Value
 int = Int <$> decimal
 
-bool :: Parser Triv
+bool :: Parser Value
 bool = Bool <$> asum [ symbol "True" >> return True
                      , symbol "False" >> return False
                      ]

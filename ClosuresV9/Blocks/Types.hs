@@ -11,7 +11,7 @@ data Tail = Jump RTriv
           | If Pred Label Label
 
 data Stmt = Set Rloc RTriv
-          | BinOp BinOp Rloc RTriv
+          | NumOp NumOp Rloc RTriv
           | MRef Rloc RTriv RTriv
           | MSet RTriv RTriv RTriv
 

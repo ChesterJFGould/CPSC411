@@ -4,7 +4,7 @@ data Program = Program [Label] [Stmt]
 
 data Stmt = SetReg Reg RVal
           | SetAddr Addr AVal
-          | BinOp BinOp Reg OVal
+          | NumOp NumOp Reg OVal
           | Compare Reg OVal
           | JumpIf RelOp RTriv
           | Jump RTriv
@@ -13,7 +13,7 @@ data Stmt = SetReg Reg RVal
 data RVal = RInt Int64
           | RReg Reg
           | RAddr Addr
-          | RLabel Labe
+          | RLabel Label
 
 data AVal = AInt Int32
           | AReg Reg
