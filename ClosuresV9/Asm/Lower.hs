@@ -29,8 +29,8 @@ lowerBody (Body tail) = U.Body (evalState (lowerTail tail) S.empty)
 
 lowerTail :: Tail -> Undead U.Tail
 lowerTail (Jump triv used) = do
-                             setTrivUndead triv
                              mapM setLocUndead used
+                             setTrivUndead triv
                              return (U.Jump triv used)
 lowerTail (TSeq stmts tail) = U.TSeq <$> lowerStmts stmts
                                      <*> lowerTail tail
@@ -62,6 +62,7 @@ lowerStmt (MSet ptr offset val) = do
                                   tagUndead (U.MSet ptr offset val)
 lowerStmt (JumpRet triv used) = do
                                 mapM setLocUndead used
+                                setTrivUndead triv
                                 setLocDead ((MRloc . Reg) Locations.returnRegister)
                                 tagUndead (U.JumpRet triv used)
 lowerStmt (If p c a) = mdo

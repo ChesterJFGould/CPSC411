@@ -1,17 +1,22 @@
 zero? : Int -> Bool
 zero? n = n == 0
 ;
+true? : Int -> Bool
+true? n = True
+;
 pred : Int -> Int
 pred n = n - 1
 ;
 even? : Int -> Bool
-even? n = if zero? n
+even? n = if (zero? n)
           then True
-          else odd? (pred n)
+          else odd? (n - 1)
 ;
 odd? : Int -> Bool
-odd? n = if zero? n
+odd? n = if (n == 0)
          then False
-         else even? (pred n)
+         else even? (n - 1)
 ;
-even? 11
+if even? 10
+then 1
+else 0

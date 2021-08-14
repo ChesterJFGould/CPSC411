@@ -2,12 +2,17 @@ module Main where
 
 import Asm
 import Bits
+import Blocks
 import Canonical
 import Closures
 import Consts
 import Exprs
 import Monadic
+import Nested
+import Para
+import Paren
 import Pred
+import Undead
 import Uniform
 import Unique
 import Values
@@ -26,9 +31,17 @@ handleError msg = do
                   
 
 main :: IO ()
-main = getContents >>= either handleError pPrintForceColor
+main = do
+       prelude <- readFile "Runtime/prelude.s"
+       postlude <- readFile "Runtime/postlude.s"
+       getContents >>= either handleError putStrLn
                        . (>>= return
                               . flip evalState 0
+                              . liftM (Paren.compile prelude postlude)
+                              . liftM Para.lower
+                              . liftM Blocks.lower
+                              . (>>= Nested.lower)
+                              . liftM Undead.lower
                               . liftM Asm.lower
                               . (>>= Canonical.lower)
                               . liftM Monadic.lower

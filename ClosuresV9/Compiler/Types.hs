@@ -41,7 +41,7 @@ data BinOp = BNumOp NumOp
            deriving Show
 
 data Lit = Lit Word64
-         deriving Show
+         deriving (Eq, Ord, Show)
 
 data ATriv = ALit Lit
            | AAloc Aloc
@@ -77,4 +77,9 @@ data Reg = RSP
          deriving (Eq, Ord, Show)
 
 data Addr = Stack Int
+          | Pointer AddrTriv AddrTriv
           deriving (Eq, Ord, Show)
+
+data AddrTriv = AddrLit Lit
+              | AddrReg Reg
+              deriving (Eq, Ord, Show)

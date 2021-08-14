@@ -1,25 +1,34 @@
 module Paren.Types where
 
+import Compiler.Types
+
+import Data.Word
+
 data Program = Program [Label] [Stmt]
+             deriving Show
 
 data Stmt = SetReg Reg RVal
           | SetAddr Addr AVal
           | NumOp NumOp Reg OVal
           | Compare Reg OVal
-          | JumpIf RelOp RTriv
+          | JumpIf RelOp Label
           | Jump RTriv
           | Labelled Label Stmt
+          deriving Show
 
-data RVal = RInt Int64
+data RVal = RWord Word64
           | RReg Reg
           | RAddr Addr
-          | RLabel Label
+          | RVLabel Label
+          deriving Show
 
-data AVal = AInt Int32
+data AVal = AWord Word32
           | AReg Reg
-          | ALabel Label
+          | AVLabel Label
+          deriving Show
 
-data OVal = OInt Int32
+data OVal = OWord Word32
           | OReg Reg
           | OAddr Addr
-          | OLabel Label
+          | OVLabel Label
+          deriving Show
